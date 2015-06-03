@@ -8,20 +8,20 @@
 # Install dependencies
 Pkg.add("Images")
 Pkg.add("TestImages")
-Pkg.add("PyPlot")
+# Pkg.add("PyPlot")
 
 # Invoke namespaces
 using Base
 using Images
 using TestImages
-using PyPlot
+# using PyPlot
 using FixedPointNumbers
 
 # Load the images
 # The extra business here converts the loaded image from a built-in image-datatype
 # to floats which can be multiplied by the Gaussian window.
-img_01 = float(convert(Array, imread("/Users/matthewgiarra/Desktop/image_01.tif")));
-img_02 = float(convert(Array, imread("/Users/matthewgiarra/Desktop/image_02.tif")));
+img_01 = float(convert(Array, Images.imread("/Users/matthewgiarra/Desktop/image_01.tif")));
+img_02 = float(convert(Array, Images.imread("/Users/matthewgiarra/Desktop/image_02.tif")));
 
 # Determine the sizes of the images.
 (height, width) = size(img_01)
@@ -50,6 +50,10 @@ gaussian_window = (exp(-(x - xc).^2/window_std_dev^2) .* exp(-(y - yc).^2 / wind
 # comes out as [height/2, width],
 # which is not bad, but I am not doing it now.
 p = plan_fft(img_01, [1, 2], FFTW.MEASURE);
+
+using cross_correlation
+
+spectral_corr_complex = cross_correlation.cross_correlation(img_01, img_02, p);
 
 # Execute the FFT plan on the two images.
 f1 = p(img_01 .* gaussian_window)
